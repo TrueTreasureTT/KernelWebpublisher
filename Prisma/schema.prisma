@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum DeploymentStatus {
+  QUEUED
+  BUILDING
+  READY
+  FAILED
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String?
+  password    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  projects    Project[]
+}
+
+model Project {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String
+  description    String?
+  source         String          @db.Text
+  status         ProjectStatus   @default(DRAFT)
+
+  userId         String
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  deployments    Deployment[]
+  domains        Domain[]
+
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([userId, slug])
+  @@index([userId])
+}
+
+model Deployment {
+  id             String           @id @default(cuid())
+  projectId      String
+  project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  status         DeploymentStatus  @default(QUEUED)
+  version        Int
+  outputUrl      String?
+  error          String?          @db.Text
+
+  createdAt      DateTime         @default(now())
+  completedAt    DateTime?
+
+  @@index([projectId])
+}
+
+model Domain {
+  id             String    @id @default(cuid())
+  hostname       String    @unique
+
+  projectId      String
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  verified       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  @@index([projectId])
+}
