@@ -7,90 +7,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ProjectStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum DeploymentStatus {
-  QUEUED
-  BUILDING
-  READY
-  FAILED
-}
+enum ProjectStatus { DRAFT PUBLISHED ARCHIVED }
+enum DeploymentStatus { QUEUED BUILDING READY FAILED }
 
 model User {
-  id          String       @id @default(cuid())
-  email       String       @unique
-  name        String?
-  password    String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  projects    Project[]
+  id String @id @default(cuid())
+  email String @unique
+  name String?
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projects Project[]
 }
 
 model Project {
-  id             String          @id @default(cuid())
-  name           String
-  slug           String
-  description    String?
-  source         String          @db.Text
-  status         ProjectStatus   @default(DRAFT)
-
-  userId         String
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  deployments    Deployment[]
-  domains        Domain[]
-
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-
+  id String @id @default(cuid())
+  name String
+  slug String
+  description String?
+  source String @db.Text
+  status ProjectStatus @default(DRAFT)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deployments Deployment[]
+  domains Domain[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   @@unique([userId, slug])
   @@index([userId])
 }
 
 model Deployment {
-  id             String           @id @default(cuid())
-  projectId      String
-  project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  status         DeploymentStatus  @default(QUEUED)
-  version        Int
-  outputUrl      String?
-  error          String?           @db.Text
-
-  files          DeploymentFile[]
-
-  createdAt      DateTime          @default(now())
-  completedAt    DateTime?
-
+  id String @id @default(cuid())
+  projectId String
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  status DeploymentStatus @default(QUEUED)
+  version Int
+  outputUrl String?
+  releasePath String?
+  error String? @db.Text
+  files DeploymentFile[]
+  createdAt DateTime @default(now())
+  completedAt DateTime?
   @@index([projectId])
 }
 
 model DeploymentFile {
-  id           String     @id @default(cuid())
+  id String @id @default(cuid())
   deploymentId String
-  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
-  path         String
-  size         Int
-  contentType  String?
-
+  deployment Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  path String
+  size Int
+  contentType String?
   @@unique([deploymentId, path])
   @@index([deploymentId])
 }
 
 model Domain {
-  id             String    @id @default(cuid())
-  hostname       String    @unique
-
-  projectId      String
-  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  verified       Boolean   @default(false)
-  createdAt      DateTime  @default(now())
-
+  id String @id @default(cuid())
+  hostname String @unique
+  projectId String
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  verified Boolean @default(false)
+  createdAt DateTime @default(now())
   @@index([projectId])
 }
