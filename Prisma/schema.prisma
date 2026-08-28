@@ -60,12 +60,26 @@ model Deployment {
   status         DeploymentStatus  @default(QUEUED)
   version        Int
   outputUrl      String?
-  error          String?          @db.Text
+  error          String?           @db.Text
 
-  createdAt      DateTime         @default(now())
+  files          DeploymentFile[]
+
+  createdAt      DateTime          @default(now())
   completedAt    DateTime?
 
   @@index([projectId])
+}
+
+model DeploymentFile {
+  id           String     @id @default(cuid())
+  deploymentId String
+  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  path         String
+  size         Int
+  contentType  String?
+
+  @@unique([deploymentId, path])
+  @@index([deploymentId])
 }
 
 model Domain {
