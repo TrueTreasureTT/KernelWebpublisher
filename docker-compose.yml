@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kernel_publisher
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/kernel_publisher
+      JWT_SECRET: change-me
+      BASE_DOMAIN: example.kernel.app
+      NODE_ENV: production
+    depends_on:
+      - postgres
+    ports:
+      - "4000:4000"
+
+volumes:
+  postgres_data:
