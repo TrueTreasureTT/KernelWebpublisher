@@ -1,35 +1,3 @@
 export default function Home() {
-  return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 40,
-        fontFamily: "system-ui"
-      }}
-    >
-      <h1>Kernel Publisher</h1>
-
-      <p>
-        Publish websites to your own cloud domain.
-      </p>
-
-      <a
-        href="/dashboard"
-        style={{
-          marginTop: 24,
-          padding: "12px 20px",
-          borderRadius: 8,
-          background: "black",
-          color: "white",
-          textDecoration: "none"
-        }}
-      >
-        Open Dashboard
-      </a>
-    </main>
-  );
+  return <main style={{minHeight:'100vh',background:'#0b0712',color:'#fff',display:'grid',placeItems:'center',fontFamily:'system-ui'}}><section style={{textAlign:'center'}}><img src="/kernel-logo.svg" width="72" height="72" alt="Kernel"/><p style={{color:'#bd7cff',letterSpacing:'.2em',fontSize:11,fontWeight:800}}>KERNEL CLOUD</p><h1>Build. Publish. <span style={{color:'#a855f7'}}>Ship.</span></h1><p style={{color:'#a99ab5'}}>Publish websites to your own cloud domain.</p><div style={{display:'flex',gap:12,justifyContent:'center',marginTop:24}}><a href="/register" style={{background:'#8b5cf6',color:'#fff',padding:'12px 18px',borderRadius:9,textDecoration:'none',fontWeight:700}}>Create account</a><a href="/login" style={{border:'1px solid #49345e',color:'#fff',padding:'12px 18px',borderRadius:9,textDecoration:'none'}}>Log in</a><a href="/dashboard" style={{border:'1px solid #49345e',color:'#fff',padding:'12px 18px',borderRadius:9,textDecoration:'none'}}>Open Publisher</a></div></section></main>;
 }
